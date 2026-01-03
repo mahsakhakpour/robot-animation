@@ -1,17 +1,21 @@
-const colors = ["#4fc3f7", "#f44336", "#ffb74d", "#81c784"];
+const colors = [
+  "linear-gradient(145deg, #2196F3, #0D47A1)",    // Blue
+  "linear-gradient(145deg, #F44336, #B71C1C)",    // Red
+  "linear-gradient(145deg, #FF9800, #E65100)",    // Orange
+  "linear-gradient(145deg, #4CAF50, #1B5E20)"     // Green
+];
 const robots = document.querySelectorAll(".robot");
 
 robots.forEach((robot, i) => {
   const startX = 20;
   robot.style.left = startX + "px";
-  robot.style.top = `${50 + i*120}px`;
+  robot.style.top = `${50 + i*140}px`;
   robot.dataset.moving = "0";
   robot.dataset.direction = "right";
 
   // HEAD
   const head = document.createElement("div");
   head.className = "head";
-  head.style.background = colors[i];
   robot.appendChild(head);
 
   // BODY
@@ -19,6 +23,11 @@ robots.forEach((robot, i) => {
   body.className = "body";
   body.style.background = colors[i];
   robot.appendChild(body);
+
+  // CENTER EMBLEM
+  const centerEmblem = document.createElement("div");
+  centerEmblem.className = "center-emblem";
+  body.appendChild(centerEmblem);
 
   // EYES
   const leftEye = document.createElement("div");
@@ -28,6 +37,22 @@ robots.forEach((robot, i) => {
   head.appendChild(leftEye);
   head.appendChild(rightEye);
 
+  // SHOULDERS
+  const leftShoulder = document.createElement("div");
+  leftShoulder.className = "shoulder left";
+  const rightShoulder = document.createElement("div");
+  rightShoulder.className = "shoulder right";
+  robot.appendChild(leftShoulder);
+  robot.appendChild(rightShoulder);
+
+  // ARMS
+  const leftArm = document.createElement("div");
+  leftArm.className = "arm left";
+  const rightArm = document.createElement("div");
+  rightArm.className = "arm right";
+  robot.appendChild(leftArm);
+  robot.appendChild(rightArm);
+
   // HANDS
   const leftHand = document.createElement("div");
   leftHand.className = "hand left";
@@ -36,6 +61,14 @@ robots.forEach((robot, i) => {
   robot.appendChild(leftHand);
   robot.appendChild(rightHand);
 
+  // HIPS
+  const leftHip = document.createElement("div");
+  leftHip.className = "hip left";
+  const rightHip = document.createElement("div");
+  rightHip.className = "hip right";
+  robot.appendChild(leftHip);
+  robot.appendChild(rightHip);
+
   // LEGS
   const leftLeg = document.createElement("div");
   leftLeg.className = "leg left";
@@ -43,6 +76,22 @@ robots.forEach((robot, i) => {
   rightLeg.className = "leg right";
   robot.appendChild(leftLeg);
   robot.appendChild(rightLeg);
+
+  // FEET
+  const leftFoot = document.createElement("div");
+  leftFoot.className = "foot";
+  leftLeg.appendChild(leftFoot);
+  
+  const rightFoot = document.createElement("div");
+  rightFoot.className = "foot";
+  rightLeg.appendChild(rightFoot);
+
+  // BACKPACK (only on some robots for variety)
+  if (i % 2 === 0) {
+    const backpack = document.createElement("div");
+    backpack.className = "backpack";
+    robot.appendChild(backpack);
+  }
 
   // Click to start movement
   robot.addEventListener("click", () => {
@@ -54,39 +103,33 @@ robots.forEach((robot, i) => {
 
       if (robot.dataset.direction === "right") {
         x += 2;
-        robot.style.transform = "scaleX(1)"; // face right
+        robot.style.transform = "scaleX(1)";
         if (x + robot.offsetWidth >= window.innerWidth - 10) {
-          // Add flip animation at the end
           robot.style.transition = "transform 0.3s";
           robot.style.transform = "scaleX(-1)";
           setTimeout(() => {
             robot.style.transition = "";
-            robot.dataset.direction = "left"; // change direction
+            robot.dataset.direction = "left";
           }, 300);
         }
       } else if (robot.dataset.direction === "left") {
         x -= 2;
-        robot.style.transform = "scaleX(-1)"; // face left
+        robot.style.transform = "scaleX(-1)";
         
-        // Check if robot has reached or passed the starting position
         if (x <= startX) {
-          // Position exactly at start
           robot.style.left = startX + "px";
-          
-          // Add flip animation to face right again
           robot.style.transition = "transform 0.3s";
           robot.style.transform = "scaleX(1)";
           
           setTimeout(() => {
             robot.style.transition = "";
-            robot.dataset.moving = "0"; // STOP MOVEMENT
-            robot.dataset.direction = "right"; // reset direction for next click
-            return; // Exit the move function - STOP COMPLETELY
+            robot.dataset.moving = "0";
+            robot.dataset.direction = "right";
+            return;
           }, 300);
         }
       }
 
-      // Only continue moving if we haven't stopped
       if (robot.dataset.moving === "1") {
         robot.style.left = x + "px";
         requestAnimationFrame(move);
